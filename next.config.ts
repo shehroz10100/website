@@ -32,10 +32,10 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["lucide-react"],
     // Large multipart bodies cloned for middleware (default 10mb)
     middlewareClientMaxBodySize: "70mb",
-  },
-  // Safety net for other admin uploads still using Server Actions
-  serverActions: {
-    bodySizeLimit: "70mb",
+    // Safety net for admin uploads still using Server Actions
+    serverActions: {
+      bodySizeLimit: "70mb",
+    },
   },
   async headers() {
     return [

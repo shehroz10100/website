@@ -99,7 +99,12 @@ export async function POST(request: NextRequest) {
   }
 
   const supabase = await createClient();
-  const { product_id, website: _hp, ...rest } = parsed.data;
+  const { product_id, website, ...rest } = parsed.data;
+  if (website) {
+    return withSecurityHeaders(
+      NextResponse.json({ ok: true }, { status: 200 })
+    );
+  }
 
   const { error } = await supabase.from("inquiries").insert({
     customer_name: rest.customer_name,

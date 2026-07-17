@@ -157,7 +157,14 @@ export async function submitInquiryAction(
   }
 
   const supabase = await createClient();
-  const { product_id, website: _honeypot, ...rest } = parsed.data;
+  const { product_id, website, ...rest } = parsed.data;
+  if (website) {
+    // Honeypot filled — pretend success without storing
+    return {
+      success: true,
+      message: "Inquiry submitted. Our team will respond shortly.",
+    };
+  }
 
   const { error } = await supabase.from("inquiries").insert({
     customer_name: rest.customer_name,
@@ -405,6 +412,13 @@ export type AutoEnrichment = {
   specifications: string;
   meta_title: string;
   meta_description: string;
+};
+
+export type AutoCategorizeItem = {
+  product_name: string;
+  image_url: string;
+  size?: string;
+  page_number: number;
 };
 
 export async function autoCategorizeImportAction(
@@ -781,7 +795,7 @@ export async function bulkCreateProductsAction(
 
     const uniqueSlug = (base: string, pageNumber: number) => {
       const cleaned = slugify(base) || "instrument";
-      let candidate = `${cleaned}-p${pageNumber}`.slice(0, 180);
+      const candidate = `${cleaned}-p${pageNumber}`.slice(0, 180);
       if (!usedSlugs.has(candidate)) {
         usedSlugs.add(candidate);
         return candidate;
