@@ -172,6 +172,7 @@ export const testimonials = [
 /** Local attractive instrument photos used when a category has no CMS image */
 export const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
   orthopedic: "/images/categories/orthopedic.jpg",
+  "orthopedic-instruments": "/images/categories/orthopedic.jpg",
   "dental-oral": "/images/categories/dental-oral.jpg",
   cardiovascular: "/images/categories/cardiovascular.jpg",
   "ent-microsurgery": "/images/categories/ent-microsurgery.jpg",

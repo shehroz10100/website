@@ -370,6 +370,16 @@ export async function ensureSpecialtyCategoriesAction(): Promise<
       }
     }
 
+    // Backfill empty descriptions (e.g. "Orthopedic instruments")
+    for (const cat of existing || []) {
+      if (cat.description?.trim()) continue;
+      const description = categoryDescription(cat.name);
+      await supabase
+        .from("categories")
+        .update({ description })
+        .eq("id", cat.id);
+    }
+
     const { data: allCategories, error: refreshError } = await supabase
       .from("categories")
       .select("*")

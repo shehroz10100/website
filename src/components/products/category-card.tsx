@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Category } from "@/types/database";
 import { categoryDisplayImage } from "@/lib/site-content";
+import { categoryDescription } from "@/lib/surgical-categories";
 
 type Props = {
   category: Category;
@@ -9,6 +10,8 @@ type Props = {
 
 export function CategoryCard({ category }: Props) {
   const imageSrc = categoryDisplayImage(category.slug, category.image);
+  const description =
+    category.description?.trim() || categoryDescription(category.name);
 
   return (
     <Link
@@ -28,11 +31,7 @@ export function CategoryCard({ category }: Props) {
         <h3 className="font-display text-2xl font-semibold tracking-tight">
           {category.name}
         </h3>
-        {category.description && (
-          <p className="mt-2 line-clamp-2 text-sm text-white/80">
-            {category.description}
-          </p>
-        )}
+        <p className="mt-2 line-clamp-2 text-sm text-white/80">{description}</p>
         <span className="mt-4 text-sm font-medium text-white/95 transition group-hover:translate-x-1">
           View instruments →
         </span>
