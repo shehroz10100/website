@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { getCategories, getProducts } from "@/lib/queries";
 import { absoluteUrl } from "@/lib/utils";
 
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [products, categories] = await Promise.all([
     getProducts(),

@@ -11,6 +11,10 @@ import {
 
 export { hasSupabaseConfig };
 
+/**
+ * Cookie-based client for authenticated Server Actions / admin routes.
+ * Using cookies forces those routes to be dynamic.
+ */
 export async function createClient() {
   const url = getSupabaseUrl();
   const key = getSupabasePublishableKey();
@@ -37,6 +41,28 @@ export async function createClient() {
           // Called from a Server Component — middleware refreshes sessions.
         }
       },
+    },
+  });
+}
+
+/**
+ * Cookie-free anon client for public catalog reads (home, products, sitemap).
+ * Avoids "Dynamic server usage: cookies" during static generation.
+ */
+export function createPublicClient() {
+  const url = getSupabaseUrl();
+  const key = getSupabasePublishableKey();
+
+  if (!url || !key) {
+    throw new Error(
+      "Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"
+    );
+  }
+
+  return createSupabaseJsClient<Database>(url, key, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
     },
   });
 }

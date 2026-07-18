@@ -29,6 +29,9 @@ export const metadata: Metadata = buildMetadata({
   path: "/",
 });
 
+/** Revalidate catalog data periodically without forcing cookies on every request */
+export const revalidate = 60;
+
 export default async function HomePage() {
   const [featured, categories] = await Promise.all([
     getProducts({ featured: true, limit: 6 }),

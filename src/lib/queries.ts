@@ -1,4 +1,4 @@
-import { createClient, hasSupabaseConfig } from "@/lib/supabase/server";
+import { createClient, createPublicClient, hasSupabaseConfig } from "@/lib/supabase/server";
 import type {
   Category,
   InquiryWithProduct,
@@ -9,7 +9,7 @@ import type {
 export async function getCategories(): Promise<Category[]> {
   if (!hasSupabaseConfig()) return [];
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("categories")
       .select("*")
@@ -31,7 +31,7 @@ export async function getCategoryBySlug(
 ): Promise<Category | null> {
   if (!hasSupabaseConfig()) return null;
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("categories")
       .select("*")
@@ -57,7 +57,7 @@ export async function getProducts(options?: {
 }): Promise<ProductWithCategory[]> {
   if (!hasSupabaseConfig()) return [];
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     let query = supabase
       .from("products")
       .select("*, categories(id, name, slug)")
@@ -95,7 +95,7 @@ export async function getProductBySlug(
 ): Promise<ProductWithCategory | null> {
   if (!hasSupabaseConfig()) return null;
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("products")
       .select("*, categories(id, name, slug)")
@@ -116,7 +116,7 @@ export async function getProductBySlug(
 export async function getProductById(id: string): Promise<Product | null> {
   if (!hasSupabaseConfig()) return null;
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("products")
       .select("*")
@@ -137,7 +137,7 @@ export async function getProductById(id: string): Promise<Product | null> {
 export async function getCategoryById(id: string): Promise<Category | null> {
   if (!hasSupabaseConfig()) return null;
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("categories")
       .select("*")
@@ -241,7 +241,7 @@ export async function getCatalogProducts(options?: {
   if (!hasSupabaseConfig()) return empty;
 
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
