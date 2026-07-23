@@ -5,8 +5,20 @@ import {
   getSupabaseUrl,
 } from "@/lib/supabase/env";
 
+/**
+ * Session refresh only on /admin routes.
+ * Public pages skip Supabase auth network calls to keep TTFB low (esp. mobile).
+ */
 export async function updateSession(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  const isAdminArea = pathname.startsWith("/admin");
+
   let supabaseResponse = NextResponse.next({ request });
+
+  // Fast path: marketing/catalog pages — no auth round-trip
+  if (!isAdminArea) {
+    return supabaseResponse;
+  }
 
   const url = getSupabaseUrl();
   const key = getSupabasePublishableKey();
@@ -36,7 +48,6 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const pathname = request.nextUrl.pathname;
   const isAdminRoute =
     pathname.startsWith("/admin") && !pathname.startsWith("/admin/login");
 

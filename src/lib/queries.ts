@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { createClient, createPublicClient, hasSupabaseConfig } from "@/lib/supabase/server";
 import type {
   Category,
@@ -6,7 +7,9 @@ import type {
   ProductWithCategory,
 } from "@/types/database";
 
-export async function getCategories(): Promise<Category[]> {
+const PUBLIC_REVALIDATE = 300;
+
+async function fetchCategories(): Promise<Category[]> {
   if (!hasSupabaseConfig()) return [];
   try {
     const supabase = createPublicClient();
@@ -25,6 +28,10 @@ export async function getCategories(): Promise<Category[]> {
     return [];
   }
 }
+
+export const getCategories = unstable_cache(fetchCategories, ["public-categories"], {
+  revalidate: PUBLIC_REVALIDATE,
+});
 
 export async function getCategoryBySlug(
   slug: string
@@ -49,12 +56,16 @@ export async function getCategoryBySlug(
   }
 }
 
-export async function getProducts(options?: {
+type ProductQueryOptions = {
   categoryId?: string;
   featured?: boolean;
   search?: string;
   limit?: number;
-}): Promise<ProductWithCategory[]> {
+};
+
+async function fetchProducts(
+  options?: ProductQueryOptions
+): Promise<ProductWithCategory[]> {
   if (!hasSupabaseConfig()) return [];
   try {
     const supabase = createPublicClient();
@@ -88,6 +99,38 @@ export async function getProducts(options?: {
     console.error("getProducts:", e);
     return [];
   }
+}
+
+const getCachedProducts = unstable_cache(
+  async (cacheKey: string) => {
+    const parsed = JSON.parse(cacheKey) as {
+      categoryId: string | null;
+      featured: boolean | null;
+      search: string | null;
+      limit: number | null;
+    };
+    return fetchProducts({
+      categoryId: parsed.categoryId ?? undefined,
+      featured: parsed.featured ?? undefined,
+      search: parsed.search ?? undefined,
+      limit: parsed.limit ?? undefined,
+    });
+  },
+  ["public-products"],
+  { revalidate: PUBLIC_REVALIDATE }
+);
+
+export function getProducts(
+  options?: ProductQueryOptions
+): Promise<ProductWithCategory[]> {
+  return getCachedProducts(
+    JSON.stringify({
+      categoryId: options?.categoryId ?? null,
+      featured: options?.featured ?? null,
+      search: options?.search ?? null,
+      limit: options?.limit ?? null,
+    })
+  );
 }
 
 export async function getProductBySlug(

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import {
 import {
   ABOUT_PANEL_IMAGE,
   HERO_BACKGROUND_IMAGE,
+  HERO_BACKGROUND_IMAGE_MOBILE,
   certifications,
   exportCountries,
   manufacturingSteps,
@@ -29,8 +30,52 @@ export const metadata: Metadata = buildMetadata({
   path: "/",
 });
 
-/** Revalidate catalog data periodically without forcing cookies on every request */
-export const revalidate = 60;
+/** Longer CDN cache — cuts mobile TTFB on repeat visits */
+export const revalidate = 300;
+
+function HeroBackground() {
+  const common = {
+    alt: "Precision stainless steel surgical instruments",
+    sizes: "100vw",
+    quality: 55,
+  };
+
+  const {
+    props: { srcSet: mobileSrcSet },
+  } = getImageProps({
+    ...common,
+    src: HERO_BACKGROUND_IMAGE_MOBILE,
+    width: 800,
+    height: 534,
+  });
+
+  const {
+    props: { srcSet: desktopSrcSet, ...rest },
+  } = getImageProps({
+    ...common,
+    src: HERO_BACKGROUND_IMAGE,
+    width: 1280,
+    height: 854,
+    priority: true,
+  });
+
+  return (
+    <picture>
+      <source media="(max-width: 768px)" srcSet={mobileSrcSet} sizes="100vw" />
+      {/* Art-directed LCP hero — picture + optimized srcSets */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        {...rest}
+        srcSet={desktopSrcSet}
+        alt={common.alt}
+        className="absolute inset-0 h-full w-full object-cover object-center"
+        style={{ position: "absolute", height: "100%", width: "100%", inset: 0 }}
+        fetchPriority="high"
+        decoding="async"
+      />
+    </picture>
+  );
+}
 
 export default async function HomePage() {
   const [featured, categories] = await Promise.all([
@@ -49,33 +94,24 @@ export default async function HomePage() {
           isPartOf: { "@type": "WebSite", name: SITE_NAME },
         }}
       />
-      {/* Hero Banner — no entrance motion (CLS/LCP critical) */}
-      <section className="relative isolate min-h-[70vh] overflow-hidden text-white sm:min-h-[80vh] lg:min-h-[88vh]">
-        <Image
-          src={HERO_BACKGROUND_IMAGE}
-          alt="Precision stainless steel surgical instruments"
-          fill
-          priority
-          fetchPriority="high"
-          quality={60}
-          className="object-cover object-center"
-          sizes="100vw"
-        />
+      {/* Hero Banner — art-directed image, no motion (CLS/LCP) */}
+      <section className="relative isolate min-h-[62vh] overflow-hidden text-white sm:min-h-[75vh] lg:min-h-[85vh]">
+        <HeroBackground />
         <div className="absolute inset-0 bg-gradient-to-r from-steel/92 via-steel/75 to-steel/45" />
         <div className="absolute inset-0 bg-gradient-to-t from-steel/70 via-transparent to-steel/30" />
-        <div className="relative mx-auto flex min-h-[70vh] max-w-7xl flex-col justify-center px-4 py-24 sm:min-h-[80vh] sm:px-6 lg:min-h-[88vh] lg:px-8">
-          <p className="font-display text-5xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
+        <div className="relative mx-auto flex min-h-[62vh] max-w-7xl flex-col justify-center px-4 py-20 sm:min-h-[75vh] sm:px-6 sm:py-24 lg:min-h-[85vh] lg:px-8">
+          <p className="font-display text-4xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
             Nexvor Intl
           </p>
           <div className="mt-4 h-1 w-24 bg-primary" />
-          <h1 className="mt-6 max-w-2xl font-display text-2xl font-medium leading-snug text-white/90 sm:text-3xl">
+          <h1 className="mt-5 max-w-2xl font-display text-xl font-medium leading-snug text-white/90 sm:mt-6 sm:text-3xl">
             Precision instruments for the modern OR
           </h1>
-          <p className="mt-4 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/70 sm:mt-4 sm:text-lg">
             German stainless steel surgical tools for hospitals, distributors,
             and OEM partners — engineered for reliability under sterilization.
           </p>
-          <div className="mt-10 flex flex-wrap gap-4">
+          <div className="mt-8 flex flex-wrap gap-3 sm:mt-10 sm:gap-4">
             <Button asChild size="lg" className="rounded-full bg-primary px-8 shadow-sm hover:bg-teal-deep">
               <Link href="/products">
                 Browse Catalog <ArrowRight className="h-4 w-4" />
@@ -124,7 +160,7 @@ export default async function HomePage() {
               fill
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
-              quality={60}
+              quality={55}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-steel/90 via-steel/45 to-transparent" />
             <div className="relative flex h-full min-h-[280px] flex-col justify-end p-8 sm:min-h-[320px]">

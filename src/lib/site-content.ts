@@ -192,6 +192,7 @@ export const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
 
 export const DEFAULT_CATEGORY_IMAGE = "/images/categories/fallback.jpg";
 export const HERO_BACKGROUND_IMAGE = "/images/hero-instruments.jpg";
+export const HERO_BACKGROUND_IMAGE_MOBILE = "/images/hero-instruments-mobile.jpg";
 export const ABOUT_PANEL_IMAGE = "/images/about-instruments.jpg";
 
 /** Keyword → image for custom category names/slugs (order matters: first match wins) */

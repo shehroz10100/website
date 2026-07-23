@@ -29,7 +29,7 @@ export function CategoryCard({ category }: Props) {
         className="object-cover transition duration-500 ease-out group-hover:scale-[1.03]"
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         loading="lazy"
-        quality={65}
+        quality={55}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-steel/95 via-steel/55 to-steel/20 transition duration-500 group-hover:from-steel/90 group-hover:via-steel/45" />
       <div className="relative z-10 flex h-full min-h-[220px] flex-col justify-end p-6">

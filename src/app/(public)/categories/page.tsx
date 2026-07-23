@@ -11,6 +11,7 @@ export const metadata = buildMetadata({
   path: "/categories",
 });
 
+export const revalidate = 300;
 export default async function CategoriesPage() {
   const categories = await getCategories();
 

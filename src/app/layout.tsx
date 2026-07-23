@@ -11,12 +11,14 @@ const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-outfit",
   display: "swap",
+  adjustFontFallback: true,
 });
 
 const figtree = Figtree({
   subsets: ["latin"],
   variable: "--font-figtree",
   display: "swap",
+  adjustFontFallback: true,
 });
 
 const base = buildMetadata({
