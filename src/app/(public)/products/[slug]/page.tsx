@@ -5,12 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ProductCard } from "@/components/products/product-card";
+import { ProductImageGallery } from "@/components/products/product-image-gallery";
 import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { JsonLd } from "@/components/seo/json-ld";
-import {
-  InquiryFormDynamic,
-  ProductImageGalleryDynamic,
-} from "@/components/seo/dynamic-widgets";
+import { InquiryFormDynamic } from "@/components/seo/dynamic-widgets";
 import { getProductBySlug, getProducts } from "@/lib/queries";
 import { buildMetadata, productJsonLd } from "@/lib/seo";
 import { stockStatusLabel } from "@/lib/utils";
@@ -18,6 +16,8 @@ import { stockStatusLabel } from "@/lib/utils";
 type Props = {
   params: Promise<{ slug: string }>;
 };
+
+export const revalidate = 300;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -76,7 +76,7 @@ export default async function ProductDetailPage({ params }: Props) {
       <Breadcrumbs items={crumbs} />
 
       <div className="grid gap-10 lg:grid-cols-2">
-        <ProductImageGalleryDynamic
+        <ProductImageGallery
           images={images}
           alt={product.product_name}
         />

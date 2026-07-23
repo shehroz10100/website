@@ -22,7 +22,7 @@ export function ProductCard({ product }: Props) {
             src={image}
             alt={product.product_name}
             fill
-            className="object-cover transition duration-500 group-hover:scale-105"
+            className="object-cover"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             loading="lazy"
           />
@@ -51,7 +51,7 @@ export function ProductCard({ product }: Props) {
             {stockStatusLabel(product.stock_status)}
           </Badge>
         </div>
-        <h3 className="font-display text-lg font-semibold leading-snug text-steel transition group-hover:text-primary">
+        <h3 className="font-display text-lg font-semibold leading-snug text-steel group-hover:text-primary">
           {product.product_name}
         </h3>
         <p className="line-clamp-2 text-sm text-muted-foreground">

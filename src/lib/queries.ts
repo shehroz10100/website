@@ -133,27 +133,35 @@ export function getProducts(
   );
 }
 
-export async function getProductBySlug(
-  slug: string
-): Promise<ProductWithCategory | null> {
-  if (!hasSupabaseConfig()) return null;
-  try {
-    const supabase = createPublicClient();
-    const { data, error } = await supabase
-      .from("products")
-      .select("*, categories(id, name, slug)")
-      .eq("slug", slug)
-      .maybeSingle();
+const getCachedProductBySlug = unstable_cache(
+  async (slug: string) => {
+    if (!hasSupabaseConfig()) return null;
+    try {
+      const supabase = createPublicClient();
+      const { data, error } = await supabase
+        .from("products")
+        .select("*, categories(id, name, slug)")
+        .eq("slug", slug)
+        .maybeSingle();
 
-    if (error) {
-      console.error("getProductBySlug:", error.message);
+      if (error) {
+        console.error("getProductBySlug:", error.message);
+        return null;
+      }
+      return data as ProductWithCategory | null;
+    } catch (e) {
+      console.error("getProductBySlug:", e);
       return null;
     }
-    return data as ProductWithCategory | null;
-  } catch (e) {
-    console.error("getProductBySlug:", e);
-    return null;
-  }
+  },
+  ["public-product-by-slug"],
+  { revalidate: PUBLIC_REVALIDATE }
+);
+
+export function getProductBySlug(
+  slug: string
+): Promise<ProductWithCategory | null> {
+  return getCachedProductBySlug(slug);
 }
 
 export async function getProductById(id: string): Promise<Product | null> {

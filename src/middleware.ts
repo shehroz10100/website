@@ -1,7 +1,11 @@
 import { type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
-import { securityHeaders } from "@/lib/security";
+import { securityHeaders } from "@/lib/security-headers";
 
+/**
+ * Admin-only middleware. Public pages skip Edge middleware entirely
+ * so TTFB / FCP are not blocked by an auth round-trip.
+ */
 export async function middleware(request: NextRequest) {
   const response = await updateSession(request);
 
@@ -13,7 +17,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  matcher: ["/admin/:path*"],
 };

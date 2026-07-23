@@ -12,6 +12,7 @@ const outfit = Outfit({
   variable: "--font-outfit",
   display: "swap",
   adjustFontFallback: true,
+  preload: true,
 });
 
 const figtree = Figtree({
@@ -19,6 +20,7 @@ const figtree = Figtree({
   variable: "--font-figtree",
   display: "swap",
   adjustFontFallback: true,
+  preload: false,
 });
 
 const base = buildMetadata({

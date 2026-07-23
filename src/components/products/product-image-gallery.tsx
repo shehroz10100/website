@@ -77,8 +77,9 @@ export function ProductImageGallery({ images, alt }: Props) {
                 alt={alt}
                 fill
                 priority
-                className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
+                quality={60}
               />
               <span className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-md bg-steel/80 px-2.5 py-1.5 text-xs text-white opacity-0 transition group-hover:opacity-100">
                 <Expand className="h-3.5 w-3.5" /> Zoom
@@ -94,7 +95,7 @@ export function ProductImageGallery({ images, alt }: Props) {
         </div>
 
         {images.length > 1 && (
-          <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
+          <div className="grid min-h-[72px] grid-cols-4 gap-2 sm:grid-cols-5">
             {images.map((img, index) => (
               <button
                 key={img}
