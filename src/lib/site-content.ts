@@ -180,19 +180,52 @@ export const CATEGORY_FALLBACK_IMAGES: Record<string, string> = {
   gynecology: "/images/categories/gynecology.jpg",
   neurosurgery: "/images/categories/neurosurgery.jpg",
   "plastic-reconstructive": "/images/categories/plastic-reconstructive.jpg",
-  urology: "/images/categories/urology.jpg",
+  urology: "/images/categories/urology-stone.jpg",
   ophthalmology: "/images/categories/ophthalmology.jpg",
   "general-surgery": "/images/categories/general-surgery.jpg",
+  rhinology: "/images/categories/rhinology.jpg",
+  tracheotomy: "/images/categories/tracheotomy.jpg",
+  tracheostomy: "/images/categories/tracheotomy.jpg",
+  "kidney-liver-gall-stone-urology": "/images/categories/urology-stone.jpg",
+  "kidney-liver-gallstone-urology": "/images/categories/urology-stone.jpg",
 };
 
 export const DEFAULT_CATEGORY_IMAGE = "/images/categories/fallback.jpg";
 export const HERO_BACKGROUND_IMAGE = "/images/hero-instruments.jpg";
 export const ABOUT_PANEL_IMAGE = "/images/about-instruments.jpg";
 
+/** Keyword → image for custom category names/slugs (order matters: first match wins) */
+const CATEGORY_IMAGE_KEYWORDS: { match: RegExp; image: string }[] = [
+  { match: /rhinolog|nasal|septum|sinus/i, image: "/images/categories/rhinology.jpg" },
+  { match: /tracheot|tracheos|airway/i, image: "/images/categories/tracheotomy.jpg" },
+  {
+    match: /urolog|kidney|liver|gall\s*stone|gallstone|bladder|stone forceps/i,
+    image: "/images/categories/urology-stone.jpg",
+  },
+  { match: /ophthalm|eye|ocular|corneal/i, image: "/images/categories/ophthalmology.jpg" },
+  { match: /ortho|bone|rongeur|osteotome/i, image: "/images/categories/orthopedic.jpg" },
+  { match: /dental|oral|molar|luxator/i, image: "/images/categories/dental-oral.jpg" },
+  { match: /cardio|vascular|debakey/i, image: "/images/categories/cardiovascular.jpg" },
+  { match: /ent|microsurg|otolog|ear forceps|mcgee/i, image: "/images/categories/ent-microsurgery.jpg" },
+  { match: /laparo|trocar|endoscop/i, image: "/images/categories/laparoscopic.jpg" },
+  { match: /gynecol|obstetric|uterine|speculum/i, image: "/images/categories/gynecology.jpg" },
+  { match: /neuro|cranial|spinal/i, image: "/images/categories/neurosurgery.jpg" },
+  { match: /plastic|reconstruct/i, image: "/images/categories/plastic-reconstructive.jpg" },
+  { match: /general|hemostat|needle holder/i, image: "/images/categories/general-surgery.jpg" },
+];
+
 export function categoryDisplayImage(
   slug: string,
-  cmsImage?: string | null
+  cmsImage?: string | null,
+  name?: string | null
 ): string {
   if (cmsImage) return cmsImage;
-  return CATEGORY_FALLBACK_IMAGES[slug] || DEFAULT_CATEGORY_IMAGE;
+  if (CATEGORY_FALLBACK_IMAGES[slug]) return CATEGORY_FALLBACK_IMAGES[slug];
+
+  const haystack = `${slug} ${name || ""}`;
+  for (const rule of CATEGORY_IMAGE_KEYWORDS) {
+    if (rule.match.test(haystack)) return rule.image;
+  }
+
+  return DEFAULT_CATEGORY_IMAGE;
 }

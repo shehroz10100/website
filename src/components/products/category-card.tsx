@@ -9,7 +9,11 @@ type Props = {
 };
 
 export function CategoryCard({ category }: Props) {
-  const imageSrc = categoryDisplayImage(category.slug, category.image);
+  const imageSrc = categoryDisplayImage(
+    category.slug,
+    category.image,
+    category.name
+  );
   const description =
     category.description?.trim() || categoryDescription(category.name);
 
