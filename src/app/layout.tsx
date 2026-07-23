@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit, Figtree } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Providers } from "@/components/providers";
 import { SiteJsonLd } from "@/components/seo/site-json-ld";
 import { SITE_DESCRIPTION, SITE_NAME, buildMetadata } from "@/lib/seo";
@@ -56,6 +57,7 @@ export default function RootLayout({
       <body className={`${outfit.variable} ${figtree.variable} antialiased`}>
         <SiteJsonLd />
         <Providers>{children}</Providers>
+        <SpeedInsights />
       </body>
     </html>
   );
